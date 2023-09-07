@@ -8,7 +8,10 @@ import * as categories from '../categories';
 import * as utils from '../utils';
 
 interface options_type {
-
+    hasOwnProperty: (string) => boolean;
+    stripTags: string | boolean;
+    parse: string | boolean;
+    extraFields: [];
 }
 
 interface posts_specs {
@@ -21,7 +24,7 @@ interface posts_param {
 }
 
 export default function (Posts: posts_param) {
-    Posts.getPostSummaryByPids = async function (pids, uid, options) {
+    Posts.getPostSummaryByPids = async function (pids: number, uid: number, options: options_type) {
         if (!Array.isArray(pids) || !pids.length) {
             return [];
         }
