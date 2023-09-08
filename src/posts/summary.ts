@@ -6,10 +6,6 @@ import * as plugins from '../plugins';
 import * as categories from '../categories';
 import * as utils from '../utils';
 
-// interface post_specs {
-    
-// }
-
 interface options_type {
     hasOwnProperty: (property: string) => boolean;
     stripTags: string | boolean;
@@ -35,16 +31,17 @@ interface post_specs {
     timestamp: Date;
     timestampISO: string;
 }
+
 interface post_fields {
     filter: (filter_fn: object) => post_fields;
-    map: (p: any) => boolean[];
+    map: (p: object) => boolean[];
     forEach: (post: (post: post_specs) => void) => void;
 }
 
 interface post_param {
     getPostSummaryByPids: (pids: number, uid: number, options: options_type) => Promise<any>;
     getPostsFields: (pids: number, fields: string[]) => post_fields;
-    overrideGuestHandle: (post: post_specs, handle: undefined) => void; //unsure
+    overrideGuestHandle: (post: post_specs, handle: undefined) => void; //unsure 
     parsePost: (post: post_specs) => post_fields;
 }
 export default function (Posts: post_param) {
@@ -58,8 +55,16 @@ export default function (Posts: post_param) {
         const fields: string[] = ['pid', 'tid', 'content', 'uid', 'timestamp', 'deleted', 'upvotes', 'downvotes', 'replies', 'handle'].concat(options.extraFields);
         let posts: post_fields = Posts.getPostsFields(pids, fields);
         posts = posts.filter(Boolean);
+        // The next line calls a function in a module that has not been updated to TS yet
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-assignment
         posts = await user.blocks.filter(uid, posts);
+
+        // The next line calls a function in a module that has not been updated to TS yet
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-return
         const uids: boolean[] = _.uniq(posts.map(p => p && p.uid));
+
+        // The next line calls a function in a module that has not been updated to TS yet
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-return
         const tids: boolean[] = _.uniq(posts.map(p => p && p.tid));
         const [users, topicsAndCategories] = await Promise.all([
             user.getUsersFields(uids, ['uid', 'username', 'userslug', 'picture', 'status']),
@@ -88,7 +93,8 @@ export default function (Posts: post_param) {
         const result = await plugins.hooks.fire('filter:post.getPostSummaryByPids', { posts: posts, uid: uid });
         return result.posts;
     };
-    async function parsePosts(posts, options) {
+
+    async function parsePosts(posts: post_fields, options: options_type): Promise<boolean[]> {
         return await Promise.all(posts.map(async (post) => {
             if (!post.content || !options.parse) {
                 post.content = post.content ? validator.escape(String(post.content)) : post.content;
