@@ -66,6 +66,9 @@ export default function (Posts: post_param) {
         // The next line calls a function in a module that has not been updated to TS yet
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-return
         const tids: boolean[] = _.uniq(posts.map(p => p && p.tid));
+
+        // The next line calls a function in a module that has not been updated to TS yet
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-return
         const [users, topicsAndCategories] = await Promise.all([
             user.getUsersFields(uids, ['uid', 'username', 'userslug', 'picture', 'status']),
             getTopicAndCategories(tids),
@@ -100,18 +103,22 @@ export default function (Posts: post_param) {
                 post.content = post.content ? validator.escape(String(post.content)) : post.content;
                 return post;
             }
-            post = await Posts.parsePost(post);
+            post = Posts.parsePost(post);
             if (options.stripTags) {
                 post.content = stripTags(post.content);
             }
             return post;
         }));
     }
-    async function getTopicAndCategories(tids) {
+    async function getTopicAndCategories(tids: boolean[]): Promise<any> {
+        // The next line calls a function in a module that has not been updated to TS yet
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-assignment
         const topicsData = await topics.getTopicsFields(tids, [
             'uid', 'tid', 'title', 'cid', 'tags', 'slug',
             'deleted', 'scheduled', 'postcount', 'mainPid', 'teaserPid',
         ]);
+        // The next line calls a function in a module that has not been updated to TS yet
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-assignment
         const cids = _.uniq(topicsData.map(topic => topic && topic.cid));
         const categoriesData = await categories.getCategoriesFields(cids, [
             'cid', 'name', 'icon', 'slug', 'parentCid',
@@ -119,14 +126,14 @@ export default function (Posts: post_param) {
         ]);
         return { topics: topicsData, categories: categoriesData };
     }
-    function toObject(key, data) {
-        const obj = {};
+    function toObject(key: string, data) {
+        const obj= {};
         for (let i = 0; i < data.length; i += 1) {
             obj[data[i][key]] = data[i];
         }
         return obj;
     }
-    function stripTags(content) {
+    function stripTags(content: string): string {
         if (content) {
             return utils.stripHTMLTags(content, utils.stripTags);
         }
