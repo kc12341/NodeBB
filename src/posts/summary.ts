@@ -34,8 +34,9 @@ interface post_specs {
 
 interface post_fields {
     filter: (filter_fn: object) => post_fields;
-    map: (p: object) => boolean[];
+    map: ((p: object) => boolean[]) | ((p: object) => post_fields[]);
     forEach: (post: (post: post_specs) => void) => void;
+    // callbackfn: (value: boolean, index: number, array: boolean[]) => void
 }
 
 interface post_param {
@@ -97,7 +98,7 @@ export default function (Posts: post_param) {
         return result.posts;
     };
 
-    async function parsePosts(posts: post_fields, options: options_type): Promise<boolean[]> {
+    async function parsePosts(posts: post_fields, options: options_type): Promise<post_fields> {
         return await Promise.all(posts.map(async (post) => {
             if (!post.content || !options.parse) {
                 post.content = post.content ? validator.escape(String(post.content)) : post.content;
