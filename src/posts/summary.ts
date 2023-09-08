@@ -54,7 +54,7 @@ export default function (Posts: post_param) {
         options.parse = options.hasOwnProperty('parse') ? options.parse : true;
         options.extraFields = options.hasOwnProperty('extraFields') ? options.extraFields : [];
         const fields: string[] = ['pid', 'tid', 'content', 'uid', 'timestamp', 'deleted', 'upvotes', 'downvotes', 'replies', 'handle'].concat(options.extraFields);
-        let posts: post_fields = Posts.getPostsFields(pids, fields);
+        let posts: post_fields | boolean[] = Posts.getPostsFields(pids, fields);
         posts = posts.filter(Boolean);
         // The next line calls a function in a module that has not been updated to TS yet
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-assignment
